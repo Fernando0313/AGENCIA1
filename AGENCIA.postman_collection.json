@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "90120f75-f238-47f0-95e4-613d7f0e1fae",
+		"name": "AGENCIA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ciudad",
+			"item": [
+				{
+					"name": "/v1/ciudad/registrar",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pais",
+			"item": [
+				{
+					"name": "/v1/pais/registrar",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url_local",
+			"value": "http://localhost:9940",
+			"type": "string"
+		}
+	]
+}
