@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "90120f75-f238-47f0-95e4-613d7f0e1fae",
 		"name": "AGENCIA",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14568300"
 	},
 	"item": [
 		{
@@ -11,8 +12,30 @@
 				{
 					"name": "/v1/ciudad/registrar",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombreDTO\":\"Cusco\",\r\n    \"id_paisDTO\":2\r\n  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9940/v1/ciudad/registrar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9940",
+							"path": [
+								"v1",
+								"ciudad",
+								"registrar"
+							]
+						}
 					},
 					"response": []
 				}
@@ -23,6 +46,253 @@
 			"item": [
 				{
 					"name": "/v1/pais/registrar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombreDTO\":\"Francia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9940/v1/pais/registrar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9940",
+							"path": [
+								"v1",
+								"pais",
+								"registrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/pais/listar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/v1/pais/listar",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"v1",
+								"pais",
+								"listar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/pais/editar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idPaisDTO\":2,\r\n    \"nombreDTO\": \"Rusia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/v1/pais/editar",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"v1",
+								"pais",
+								"editar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/pais/listar/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/v1/pais/listar/2",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pais",
+								"listar",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/pais/eliminar/{id}",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "74829850",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/api/v1/pais/eliminar/20",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"pais",
+								"eliminar",
+								"20"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuario",
+			"item": [
+				{
+					"name": "/api/v1/auth",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "rojofernando296@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idRolDTO\":\"1\",\r\n    \"documentoDTO\":\"74829852\",\r\n    \"apPaternoDTO\":\"Rojo\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"contrasenaDTO\":\"12345\",\r\n    \"emailDTO\":\"fff@gmail.com\",\r\n    \"nombreDTO\":\"Fernando\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/v1/auth/registrar",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"registrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/auth/editar",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "12345",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "fff@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"idDTO\":1,\r\n    \"nombreDTO\":\"fernando aea\",\r\n    \r\n    \"documentoDTO:\":74829855,\r\n    \"idRolDTO\":\"1\"\r\n    \r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/v1/auth/editar",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"editar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/auth/listar/{id}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/auth/listar",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -55,7 +325,7 @@
 	"variable": [
 		{
 			"key": "url_local",
-			"value": "http://localhost:9940",
+			"value": "http://localhost:9942",
 			"type": "string"
 		}
 	]
