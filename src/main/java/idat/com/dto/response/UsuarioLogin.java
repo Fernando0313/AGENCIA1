@@ -19,6 +19,7 @@ public class UsuarioLogin {
 	private String documentoDTO;
 	private String emailDTO;
 	private String contrasenaDTO;
+	private String telefonoDTO;
 	private Set<Rol> rolesDTO = new HashSet<Rol>();
 	
 }

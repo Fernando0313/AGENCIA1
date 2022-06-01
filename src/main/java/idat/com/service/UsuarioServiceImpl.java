@@ -1,6 +1,8 @@
 package idat.com.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,18 +96,90 @@ public class UsuarioServiceImpl implements UsuarioService{
 	@Override
 	public UsuarioDTO editarUsuario(UsuarioEditar usuarioEditar) {
 		// TODO Auto-generated method stub
+		String nombre= usuarioEditar.getNombreDTO();
+		String apPaterno= usuarioEditar.getApPaternoDTO();
+		String apMaterno = usuarioEditar.getApMaternoDTO();
+		String contrasena = usuarioEditar.getContrasenaDTO();
+		String documento = usuarioEditar.getDocumentoDTO();
+		String telefono = usuarioEditar.getTelefonoDTO();
+		String email = usuarioEditar.getEmailDTO();
+		Integer idUsuario = usuarioEditar.getIdDTO();
+		//Integer idRol = usuarioEditar.getIdRolDTO();
+		
 		Usuario usuario = new Usuario();
+		Optional<Usuario> _usuariof = repo.findById(usuarioEditar.getIdDTO());
+		
+	
 		
 		RolDTO rolDTO = rolServ.obtenerRol(usuarioEditar.getIdRolDTO());
+		
+		
+		
 		UsuarioDTO usuarioRes = new UsuarioDTO();
 	
 		
-		usuario.setApMaterno(usuarioEditar.getApMaternoDTO());
-		usuario.setApPaterno(usuarioEditar.getApPaternoDTO());
-		usuario.setContrasena(usuarioEditar.getContrasenaDTO());
-		usuario.setDocumento(usuarioEditar.getDocumentoDTO());
-		usuario.setEmail(usuarioEditar.getEmailDTO());
-		usuario.setNombre(usuarioEditar.getNombreDTO());
+		if(nombre==null) {
+			usuario.setNombre(_usuariof.get().getNombre());
+		}else {
+			usuario.setNombre(nombre);
+		}
+		
+		if(apPaterno==null) {
+			
+			usuario.setApPaterno(_usuariof.get().getApPaterno());
+		}else {
+			System.out.println(apPaterno);
+			usuario.setApPaterno(apPaterno);
+		}
+		
+		if(apMaterno==null) {
+			usuario.setApMaterno(_usuariof.get().getApMaterno());
+		}else {
+			usuario.setApMaterno(apMaterno);
+		}
+		
+		if(contrasena==null) {
+			usuario.setContrasena(_usuariof.get().getContrasena());
+		}else {
+			usuario.setContrasena(contrasena);
+		}
+		
+		if(documento==null) {
+			usuario.setDocumento(_usuariof.get().getDocumento());
+		}else {
+			usuario.setDocumento(documento);
+		}
+		
+		if(telefono==null) {
+			usuario.setTelefono(_usuariof.get().getTelefono());
+		}else {
+			usuario.setTelefono(telefono);
+		}
+		if(email==null) {
+			usuario.setEmail(_usuariof.get().getEmail());
+		}else {
+			usuario.setEmail(email);
+		}
+		
+		usuario.setId(idUsuario);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//usuario.setApPaterno(usuarioEditar.getApPaternoDTO());
+		//usuario.setContrasena(usuarioEditar.getContrasenaDTO());
+		//usuario.setDocumento(usuarioEditar.getDocumentoDTO());
+		//usuario.setEmail(usuarioEditar.getEmailDTO());
+		//usuario.setNombre(usuarioEditar.getNombreDTO());
 		
 		if(rolDTO!=null) {
 			Rol rol = new Rol();
@@ -118,7 +192,15 @@ public class UsuarioServiceImpl implements UsuarioService{
 		usuario.setTelefono(usuarioEditar.getTelefonoDTO());
 		usuario.setId(usuarioEditar.getIdDTO());
 		
-		Usuario _usuario = repo.save(usuario);
+		Usuario _usuario = repo.saveAndFlush(usuario);
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		usuarioRes.setApMaterno(_usuario.getApMaterno());
 		usuarioRes.setApPaterno(_usuario.getApPaterno());
@@ -163,5 +245,53 @@ if(_usuario!=null) {
 		//System.out.println(_usuario.getApPaterno()+"$$$$$");
 		
 		return usuarioRes;
+	}
+	
+	@Override
+	public UsuarioLogin buscarPorId(Integer id) {
+		// TODO Auto-generated method stub
+		Optional<Usuario> usuario = repo.findById(id);
+		UsuarioLogin usuarioLogin = null;
+		if(!usuario.isEmpty()) {
+			System.out.println("##################333");
+			usuarioLogin = new UsuarioLogin();
+			usuarioLogin.setApMaternoDTO(usuario.get().getApMaterno());
+			usuarioLogin.setApPaternoDTO(usuario.get().getApPaterno());
+			usuarioLogin.setDocumentoDTO(usuario.get().getDocumento());
+			usuarioLogin.setEmailDTO(usuario.get().getEmail());
+			usuarioLogin.setIdDTO(usuario.get().getId());
+			usuarioLogin.setNombreDTO(usuario.get().getNombre());
+			usuarioLogin.setRolesDTO(usuario.get().getRoles());
+			usuarioLogin.setTelefonoDTO(usuario.get().getTelefono());
+		}
+		
+		return usuarioLogin;
+	}
+	
+	@Override
+	public List<UsuarioLogin> listarUsuarios() {
+		
+		List<Usuario> usuarioList = repo.findAll();
+		List<UsuarioLogin> usuarioLoginList = new ArrayList<UsuarioLogin>();
+		UsuarioLogin usuarioLogin = null;
+		if(usuarioList.size()!=0) {
+			for(Usuario usuario : usuarioList) {
+				 usuarioLogin = new UsuarioLogin();
+				 usuarioLogin.setApMaternoDTO(usuario.getApMaterno());
+					usuarioLogin.setApPaternoDTO(usuario.getApPaterno());
+					usuarioLogin.setDocumentoDTO(usuario.getDocumento());
+					usuarioLogin.setEmailDTO(usuario.getEmail());
+					usuarioLogin.setIdDTO(usuario.getId());
+					usuarioLogin.setNombreDTO(usuario.getNombre());
+					usuarioLogin.setRolesDTO(usuario.getRoles());
+					usuarioLogin.setTelefonoDTO(usuario.getTelefono());
+					usuarioLoginList.add(usuarioLogin);
+			}
+		}
+		
+		
+		
+		// TODO Auto-generated method stub
+		return usuarioLoginList;
 	}
 }

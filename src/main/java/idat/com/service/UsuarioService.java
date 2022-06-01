@@ -1,6 +1,7 @@
 package idat.com.service;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import idat.com.dto.request.UsuarioEditar;
@@ -18,10 +19,13 @@ public interface UsuarioService {
 	public Boolean existEmail(String email);
 	
 	public UsuarioDTO editarUsuario(UsuarioEditar usuarioEditar);
-	
+	public UsuarioLogin buscarPorId(Integer id);
 	
 	public UsuarioLogin buscarDocumento(String documento);
 	public UsuarioLogin buscarEmail(String email);
+	
+	public List<UsuarioLogin> listarUsuarios();
+	
 	//public void eliminarPais(Integer id);
 	
 	//public List<PaisDTOResponse> listarPais();
