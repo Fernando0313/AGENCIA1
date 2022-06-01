@@ -2,15 +2,13 @@ package idat.com.service;
 
 import java.util.List;
 
-
-
-import idat.com.dto.PaisDTORequest;
-import idat.com.dto.PaisDTOResponse;
+import idat.com.dto.request.PaisDTORequest;
+import idat.com.dto.response.PaisDTOResponse;
 
 public interface PaisService {
 
 	
-	public void guardarPais(PaisDTORequest pais);
+	public PaisDTOResponse guardarPais(PaisDTORequest pais);
 	public void editarPais(PaisDTORequest pais);
 	
 	public void eliminarPais(Integer id);
