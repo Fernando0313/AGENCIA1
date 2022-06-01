@@ -178,9 +178,12 @@ public class UsuarioController {
 						}
 					
 					}
+				if(usuarioEditar.getContrasenaDTO()!=null) {
+					
 				
-					  
-			
+					String contrasenaEncode = encoder.encode(usuarioEditar.getContrasenaDTO());
+					usuarioEditar.setContrasenaDTO(contrasenaEncode);		  
+				}
 			UsuarioDTO usuarioDTO = Userv.editarUsuario(usuarioEditar);
 			rtn.put("message", "Actualizado correctamente");
 			rtn.put("content", usuarioDTO);
