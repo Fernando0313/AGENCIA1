@@ -38,10 +38,20 @@ public class UsuarioRegistro {
 	@Email
 	private String emailDTO;
 	
+	@NotBlank(message = "El campo estadolDTO no puede estar en blanco")
+	@NotNull(message = "El campo estadoDTO no puede ser nulo")
+	private String estadoDTO;
+	
 	@NotBlank(message = "El campo contrasenaDTO no puede estar en blanco")
 	@NotNull(message = "El campo contrasenaDTO no puede ser nulo")
 	private String contrasenaDTO;
 	
 	@NotNull(message = "El campo idRolDTO no puede ser nulo")
 	private Integer idRolDTO;
+	
+	@NotNull(message = "El campo idEmpresaDTO no puede ser nulo")
+	private Integer idEmpresaDTO;
+	@NotNull(message = "El campo idTipoDocumento no puede ser nulo")
+	private Integer idTipoDocumento;
+	
 }

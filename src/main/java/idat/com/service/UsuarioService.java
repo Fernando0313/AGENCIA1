@@ -18,7 +18,7 @@ public interface UsuarioService {
 	public Optional<AuthDTO> obtenerDocumentoOEmailAuth(String documento, String email );
 	public Boolean existDocumento(String documento);
 	public Boolean existEmail(String email);
-	
+	public Boolean existsId(Integer id);
 	public UsuarioDTO editarUsuario(UsuarioEditar usuarioEditar);
 	public UsuarioLogin buscarPorId(Integer id);
 	

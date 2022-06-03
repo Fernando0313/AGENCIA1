@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +24,11 @@ import idat.com.dto.request.UsuarioEditar;
 import idat.com.dto.request.UsuarioRegistro;
 import idat.com.dto.response.UsuarioDTO;
 import idat.com.dto.response.UsuarioLogin;
-import idat.com.service.RolServiceImpl;
 import idat.com.service.UsuarioServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
 	@Autowired
@@ -37,45 +38,42 @@ public class UsuarioController {
 	@Autowired
 	private PasswordEncoder encoder;
 	
-	
-	
-	@Autowired
-	private RolServiceImpl  Rserv;
-	
 	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
 	public ResponseEntity<Object> registrarUsuario(@RequestBody UsuarioRegistro usuarioRegistro){
 		
-		Map<String, Object> rtn = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> _validacion = new LinkedHashMap<>();
 		try {	
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 			Validator validator = factory.getValidator();
-			Map<String, Object> errors = new LinkedHashMap<>();
+			
 			Set<ConstraintViolation<UsuarioRegistro>> violations = validator.validate(usuarioRegistro);
 			
 			for (ConstraintViolation<UsuarioRegistro> violation : violations) {
-			    errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
-			if(!errors.isEmpty()) {
-				rtn.put("message", "error al registrar");
-				rtn.put("content", errors);
+			if(!_validacion.isEmpty()) {
+				errors.put("message", "error al registrar");
+				errors.put("content", _validacion);
 				
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
 			
 			Boolean _documento = Userv.existDocumento(usuarioRegistro.getDocumentoDTO());
 			Boolean _email = Userv.existEmail(usuarioRegistro.getEmailDTO());
 			if(_documento) {
-				rtn.put("message", "Este documento ya esta registrado");
-				rtn.put("content", null);
+				errors.put("message", "Este documento ya esta registrado");
+				errors.put("content", null);
 				
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
 			
 			if(_email) {
-				rtn.put("message", "Este email ya esta registrado");
-				rtn.put("content", null);
+				errors.put("message", "Este email ya esta registrado");
+				errors.put("content", null);
 				
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
 			
 			
@@ -83,23 +81,20 @@ public class UsuarioController {
 			String contrasenaEncode = encoder.encode(usuarioRegistro.getContrasenaDTO());
 			usuarioRegistro.setContrasenaDTO(contrasenaEncode);
 			UsuarioDTO response = Userv.guardarUsuario(usuarioRegistro);
-			if(response.getNombre()!=null ) {
+		
 				
-				rtn.put("message", "registrado correctamente");
-				rtn.put("content", response);
-				return new ResponseEntity<>(rtn,HttpStatus.CREATED);
-			}
+				exito.put("message", "registrado correctamente");
+				exito.put("content", response);
+				return new ResponseEntity<>(exito,HttpStatus.CREATED);
+			
 			
 		} catch (Exception e) {
 			// TODO: handle exception
 			
-			rtn.put("message", "Error");
-			rtn.put("content", e);
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+			errors.put("message", "Error");
+			//exito.put("content", e);
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-		
-		rtn.put("message", "Error");
-		return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
 
 	}
 	
@@ -108,27 +103,30 @@ public class UsuarioController {
 	@RequestMapping(path = "/editar", method = RequestMethod.PUT)
 	public ResponseEntity<Object> editarUsuario(@RequestBody UsuarioEditar usuarioEditar){
 		
-		System.out.println(usuarioEditar.getEmailDTO());
-		Map<String, Object> rtn = new LinkedHashMap<>();
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		Map<String, Object> _validacion = new LinkedHashMap<>();
 		try {
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 			Validator validator = factory.getValidator();
-			Map<String, Object> errors = new LinkedHashMap<>();
+			
 			Set<ConstraintViolation<UsuarioEditar>> violations = validator.validate(usuarioEditar);
 			
 			for (ConstraintViolation<UsuarioEditar> violation : violations) {
-			    errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
-			if(!errors.isEmpty()) {
-				rtn.put("message", "Error al actualizar");
-				rtn.put("content", errors);
+			if(!_validacion.isEmpty()) {
+				errors.put("message", "Error al actualizar");
+				errors.put("content", _validacion);
 				
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
 			//if(usuarioEditar.getDocumentoDTO()!=null &&usuarioEditar.getEmailDTO()!=null) {
-				String documento = " ";
-				String email = " ";
-				
+				Boolean bool = Userv.existsId(usuarioEditar.getIdDTO());
+				if(!bool) {
+					errors.put("message", "Esteusuario no existe");
+					return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
+				}
 				if(usuarioEditar.getDocumentoDTO()!=null&&usuarioEditar.getEmailDTO()!=null) {
 					UsuarioLogin usuarioDocument = Userv.buscarDocumento(usuarioEditar.getDocumentoDTO());
 					UsuarioLogin usuarioEmail = Userv.buscarEmail(usuarioEditar.getEmailDTO());
@@ -180,17 +178,17 @@ public class UsuarioController {
 					usuarioEditar.setContrasenaDTO(contrasenaEncode);		  
 				}
 			UsuarioDTO usuarioDTO = Userv.editarUsuario(usuarioEditar);
-			rtn.put("message", "Actualizado correctamente");
-			rtn.put("content", usuarioDTO);
-			return new ResponseEntity<>(rtn,HttpStatus.OK);
+			exito.put("message", "Actualizado correctamente");
+			exito.put("content", usuarioDTO);
+			return new ResponseEntity<>(exito,HttpStatus.OK);
 			
 			
 		} catch (Exception e) {
 			// TODO: handle exception
 			
-			rtn.put("message", "Error");
-			rtn.put("content", e);
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+			errors.put("message", "Error");
+			errors.put("content", e);
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
 		
 	}

@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 import idat.com.dto.request.UsuarioEditar;
 import idat.com.dto.request.UsuarioRegistro;
 import idat.com.dto.response.AuthDTO;
-import idat.com.dto.response.RolDTO;
 import idat.com.dto.response.UsuarioDTO;
 import idat.com.dto.response.UsuarioLogin;
+import idat.com.model.Empresa;
 import idat.com.model.Rol;
+import idat.com.model.TipoDocumento;
 import idat.com.model.Usuario;
+import idat.com.repository.EmpresaRepository;
+import idat.com.repository.RolRepository;
+import idat.com.repository.TipoDocumentoRepository;
 import idat.com.repository.UsuarioRepository;
 
 @Service
@@ -24,21 +28,21 @@ public class UsuarioServiceImpl implements UsuarioService{
 	
 	@Autowired
 	private  UsuarioRepository repo;
-	
-	
-	
-	
+	@Autowired 
+	private EmpresaRepository Erepo;
 	@Autowired
-	private RolServiceImpl rolServ;
+	private TipoDocumentoRepository Trepo; 
+	@Autowired
+	private RolRepository Rrepo;
+	
 	@Override
 	public UsuarioDTO guardarUsuario(UsuarioRegistro usuarioDTO) {
 		// TODO Auto-generated method stub
 		UsuarioDTO usuarioRes = new UsuarioDTO();
-		RolDTO rolDTO = rolServ.obtenerRolId(usuarioDTO.getIdRolDTO());
-		Rol rol = new Rol();
-		rol.setEstado(rolDTO.getEstadoDTO());
-		rol.setId(rolDTO.getIdDTO());
-		rol.setRol(rolDTO.getRolDTO());
+		Optional<Rol> rol = Rrepo.findById(usuarioDTO.getIdRolDTO());
+		Optional<TipoDocumento> tipo = Trepo.findById(usuarioDTO.getIdEmpresaDTO());
+		Optional<Empresa> empresa = Erepo.findById(usuarioDTO.getIdTipoDocumento());
+		
 		
 		Usuario usuario = new Usuario();
 		usuario.setApMaterno(usuarioDTO.getApMaternoDTO());
@@ -47,19 +51,17 @@ public class UsuarioServiceImpl implements UsuarioService{
 		usuario.setDocumento(usuarioDTO.getDocumentoDTO());
 		usuario.setEmail(usuarioDTO.getEmailDTO());
 		usuario.setNombre(usuarioDTO.getNombreDTO());
-		usuario.setRoles(Collections.singleton(rol));
+		usuario.setRoles(Collections.singleton(rol.get()));
 		usuario.setTelefono(usuarioDTO.getTelefonoDTO());
+		usuario.setEmpresa(empresa.get());
+		usuario.setTipoDocumento(tipo.get());
+		usuario.setEstado(usuarioDTO.getEstadoDTO());
 		Usuario _usuario = repo.save(usuario);
 		usuarioRes.setApMaterno(_usuario.getApMaterno());
 		usuarioRes.setApPaterno(_usuario.getApPaterno());
 		usuarioRes.setDocumento(_usuario.getDocumento());
 		usuarioRes.setEmail(_usuario.getEmail());
 		usuarioRes.setNombre(_usuario.getNombre());
-
-	
-		//usuario.setRoles((List<Rol>) Collections.singleton(rol));
-		
-		
 		return usuarioRes;
 	}
 	@Override
@@ -97,29 +99,45 @@ public class UsuarioServiceImpl implements UsuarioService{
 	@Override
 	public UsuarioDTO editarUsuario(UsuarioEditar usuarioEditar) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("aeaaaaaaaaaaaaaaaaaa");
 		String nombre= usuarioEditar.getNombreDTO();
+		System.out.println("aeaaaaaaaaaaaaaaaaaa");
 		String apPaterno= usuarioEditar.getApPaternoDTO();
 		String apMaterno = usuarioEditar.getApMaternoDTO();
 		String contrasena = usuarioEditar.getContrasenaDTO();
 		String documento = usuarioEditar.getDocumentoDTO();
 		String telefono = usuarioEditar.getTelefonoDTO();
 		String email = usuarioEditar.getEmailDTO();
+		String estado = usuarioEditar.getEstadoDTO();
 		Integer idUsuario = usuarioEditar.getIdDTO();
-		//Integer idRol = usuarioEditar.getIdRolDTO();
+		Integer idEmpresa = usuarioEditar.getIdEmpresaDTO();
+		Integer idTipo = usuarioEditar.getIdTipoDocumento();
+		Integer idRol = usuarioEditar.getIdRolDTO();
 		
 		Usuario usuario = new Usuario();
+		System.out.println("aeaaaaaaaaaaaaaaaaaa");
+		if(idTipo!=null) {
+			Optional<TipoDocumento> tipo = Trepo.findById(idTipo);
+			usuario.setTipoDocumento(tipo.get());
+		}
+		if(idEmpresa!=null) {
+			Optional<Empresa> empresa = Erepo.findById(idEmpresa);
+			usuario.setEmpresa(empresa.get());
+		}
+		if(idRol!=null) {
+			Optional<Rol> rol = Rrepo.findById(idRol);
+			usuario.setRoles(Collections.singleton(rol.get()));
+		}
+		System.out.println("aeaaaaaaaaaaaaaaaaaa");
 		Optional<Usuario> _usuariof = repo.findById(usuarioEditar.getIdDTO());
-		
-	
-		
-		RolDTO rolDTO = rolServ.obtenerRolId(usuarioEditar.getIdRolDTO());
-		
 		
 		
 		UsuarioDTO usuarioRes = new UsuarioDTO();
 	
 		
 		if(nombre==null) {
+			System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 			usuario.setNombre(_usuariof.get().getNombre());
 		}else {
 			usuario.setNombre(nombre);
@@ -161,47 +179,22 @@ public class UsuarioServiceImpl implements UsuarioService{
 		}else {
 			usuario.setEmail(email);
 		}
-		
-		usuario.setId(idUsuario);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		//usuario.setApPaterno(usuarioEditar.getApPaternoDTO());
-		//usuario.setContrasena(usuarioEditar.getContrasenaDTO());
-		//usuario.setDocumento(usuarioEditar.getDocumentoDTO());
-		//usuario.setEmail(usuarioEditar.getEmailDTO());
-		//usuario.setNombre(usuarioEditar.getNombreDTO());
-		
-		if(rolDTO!=null) {
-			Rol rol = new Rol();
-			rol.setEstado(rolDTO.getEstadoDTO());
-			rol.setId(rolDTO.getIdDTO());
-			rol.setRol(rolDTO.getRolDTO());	
-			usuario.setRoles(Collections.singleton(rol));
+		if(idEmpresa==null) {
+			usuario.setEmpresa(_usuariof.get().getEmpresa());
 		}
-		
-		usuario.setTelefono(usuarioEditar.getTelefonoDTO());
-		usuario.setId(usuarioEditar.getIdDTO());
-		
+		if(idTipo==null) {
+			usuario.setTipoDocumento(_usuariof.get().getTipoDocumento());
+		}
+		if(idRol==null) {
+			usuario.setRoles(_usuariof.get().getRoles());
+		}
+		if(estado==null) {
+			usuario.setEstado(_usuariof.get().getEstado());
+		}else {
+			usuario.setEstado(estado);
+		}
+		usuario.setId(idUsuario);
 		Usuario _usuario = repo.saveAndFlush(usuario);
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		usuarioRes.setApMaterno(_usuario.getApMaterno());
 		usuarioRes.setApPaterno(_usuario.getApPaterno());
@@ -305,5 +298,12 @@ if(_usuario!=null) {
 		authDTO.setRolSetDTO(usuario.get().getRoles());
 		Optional<AuthDTO> Authusuario = Optional.of(authDTO);
 		return Authusuario;
+	}
+	
+	@Override
+	public Boolean existsId(Integer id) {
+		// TODO Auto-generated method stub
+		Boolean bool = repo.existsById(id);
+		return bool;
 	}
 }

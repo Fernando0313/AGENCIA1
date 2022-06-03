@@ -249,25 +249,13 @@
 					"name": "/api/v1/auth",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "12345",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "fff@gmail.com",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"idRolDTO\":2,\r\n    \"apPaternoDTO\":\"Rojo\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"contrasenaDTO\":\"123456\",\r\n    \"emailDTO\":\"franco@gmail.com\",\r\n    \"nombreDTO\":\"Franco\",\r\n    \"documentoDTO\": \"76234512\"\r\n}",
+							"raw": "{\r\n    \"idRolDTO\":2,\r\n    \"apPaternoDTO\":\"Rojo\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"contrasenaDTO\":\"123456\",\r\n    \"emailDTO\":\"ejemplo@gmail.com\",\r\n    \"nombreDTO\":\"Fernando\",\r\n    \"documentoDTO\": \"999999999\",\r\n    \"idTipoDocumento\": 2,\r\n    \"idEmpresaDTO\": 2\r\n    \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -296,13 +284,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "username",
-									"value": "rojofernando29@gmail.com",
+									"key": "password",
+									"value": "123456",
 									"type": "string"
 								},
 								{
-									"key": "password",
-									"value": "fernando0313",
+									"key": "username",
+									"value": "rojofernando296@gmail.com",
 									"type": "string"
 								}
 							]
@@ -311,7 +299,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\r\n    \"idDTO\":1,\r\n     \r\n    \"nombreDTO\":\"fernando aea7\",\r\n    \"emailDTO\":\"rojofernando29@gmail.com\",\r\n\r\n    \"idRolDTO\":\"1\"\r\n    \r\n\r\n\r\n\r\n}",
+							"raw": "{\r\n    \"idRolDTO\":2,\r\n    \"apPaternoDTO\":\"Venon\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"idDTO\":2,\r\n    \"telefonoDTO\":\"982665582\",\r\n    \"estadoDTO\":\"Activo\",\r\n    \"documentoDTO\":\"74829857\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -707,6 +695,21 @@
 				{
 					"name": "/api/v1/tipoDocumento/listar",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "rojofernando296@gmail.com",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
