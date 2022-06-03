@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import idat.com.dto.request.UsuarioEditar;
 import idat.com.dto.request.UsuarioRegistro;
+import idat.com.dto.response.AuthDTO;
 import idat.com.dto.response.RolDTO;
 import idat.com.dto.response.UsuarioDTO;
 import idat.com.dto.response.UsuarioLogin;
@@ -33,7 +34,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 	public UsuarioDTO guardarUsuario(UsuarioRegistro usuarioDTO) {
 		// TODO Auto-generated method stub
 		UsuarioDTO usuarioRes = new UsuarioDTO();
-		RolDTO rolDTO = rolServ.obtenerRol(usuarioDTO.getIdRolDTO());
+		RolDTO rolDTO = rolServ.obtenerRolId(usuarioDTO.getIdRolDTO());
 		Rol rol = new Rol();
 		rol.setEstado(rolDTO.getEstadoDTO());
 		rol.setId(rolDTO.getIdDTO());
@@ -111,7 +112,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 		
 	
 		
-		RolDTO rolDTO = rolServ.obtenerRol(usuarioEditar.getIdRolDTO());
+		RolDTO rolDTO = rolServ.obtenerRolId(usuarioEditar.getIdRolDTO());
 		
 		
 		
@@ -293,5 +294,16 @@ if(_usuario!=null) {
 		
 		// TODO Auto-generated method stub
 		return usuarioLoginList;
+	}
+	@Override
+	public Optional<AuthDTO> obtenerDocumentoOEmailAuth(String documento, String email) {
+		// TODO Auto-generated method stub
+		Optional<Usuario> usuario = repo.findByDocumentoOrEmail(documento, email);
+		AuthDTO authDTO = new AuthDTO();
+		authDTO.setContrasenaDTO(usuario.get().getContrasena());
+		authDTO.setEmailDTO(usuario.get().getEmail());
+		authDTO.setRolSetDTO(usuario.get().getRoles());
+		Optional<AuthDTO> Authusuario = Optional.of(authDTO);
+		return Authusuario;
 	}
 }
