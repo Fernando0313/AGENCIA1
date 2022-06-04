@@ -12,6 +12,9 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +36,42 @@ public class UsuarioController {
 
 	@Autowired
 	private UsuarioServiceImpl Userv;
-	
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	@Autowired
 	private PasswordEncoder encoder;
 	
-	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
+	@RequestMapping(path = "/iniciarSesion", method = RequestMethod.POST)
+	public ResponseEntity<Object> authenticateUser(@RequestBody idat.com.dto.request.UsuarioLogin usuarioLogin){
+		Map<String, Object> exito = new LinkedHashMap<>();
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> _validacion = new LinkedHashMap<>();
+		
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		
+		Set<ConstraintViolation<idat.com.dto.request.UsuarioLogin>> violations = validator.validate(usuarioLogin);
+		
+		for (ConstraintViolation<idat.com.dto.request.UsuarioLogin> violation : violations) {
+		    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
+		}
+		if(!_validacion.isEmpty()) {
+			errors.put("message", "error al registrar");
+			errors.put("content", _validacion);
+			
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+		}
+		
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(usuarioLogin.getDocumentoOrEmailDTO(), usuarioLogin.getContrasenaDTO()));
+		System.out.println(authentication);
+		System.out.println(  authentication);
+		exito.put("content", authentication);
+		exito.put("message", "Inicio sesion exitosamente");
+		return new ResponseEntity<Object>(exito,HttpStatus.OK);
+	}
+	
+	@RequestMapping(path = "/registraree", method = RequestMethod.POST)
 	public ResponseEntity<Object> registrarUsuario(@RequestBody UsuarioRegistro usuarioRegistro){
 		
 		Map<String, Object> exito = new LinkedHashMap<>();
@@ -98,8 +131,6 @@ public class UsuarioController {
 
 	}
 	
-
-
 	@RequestMapping(path = "/editar", method = RequestMethod.PUT)
 	public ResponseEntity<Object> editarUsuario(@RequestBody UsuarioEditar usuarioEditar){
 		
@@ -201,7 +232,6 @@ public class UsuarioController {
 		try {
 			UsuarioLogin usuarioLogin = Userv.buscarPorId(id);
 			if(usuarioLogin==null) {
-				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 				errors.put("message", "No se encontro este usuario");
 				return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 			}else {
@@ -239,7 +269,25 @@ public class UsuarioController {
 			return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	
+	@RequestMapping(path = "/eliminar/{id}" , method = RequestMethod.DELETE)
+	public ResponseEntity<Object> eliminarUsuario(@PathVariable Integer id){
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		try {
+			Boolean bool = Userv.existsId(id);
+			if(!bool) {
+				errors.put("message", "Error no existe el usuario");
+				return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
+			}
+			Userv.eliminarUsuario(id);
+			exito.put("message", "Usuario eliminado");
+			return new ResponseEntity<Object>(exito,HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO: handle exception
+			errors.put("message", "Error");
+			return new ResponseEntity<Object>(errors,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
 
 }

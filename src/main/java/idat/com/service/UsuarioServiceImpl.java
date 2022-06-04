@@ -306,4 +306,10 @@ if(_usuario!=null) {
 		Boolean bool = repo.existsById(id);
 		return bool;
 	}
+	@Override
+	public void eliminarUsuario(Integer id) {
+		// TODO Auto-generated method stub
+		
+		repo.deleteById(id);
+	}
 }

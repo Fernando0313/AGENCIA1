@@ -26,7 +26,7 @@ public interface UsuarioService {
 	public UsuarioLogin buscarEmail(String email);
 	
 	public List<UsuarioLogin> listarUsuarios();
-	
+	public void eliminarUsuario(Integer id);
 	//public void eliminarPais(Integer id);
 	
 	//public List<PaisDTOResponse> listarPais();
