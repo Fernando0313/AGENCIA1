@@ -71,7 +71,7 @@ public class UsuarioController {
 		return new ResponseEntity<Object>(exito,HttpStatus.OK);
 	}
 	
-	@RequestMapping(path = "/registraree", method = RequestMethod.POST)
+	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
 	public ResponseEntity<Object> registrarUsuario(@RequestBody UsuarioRegistro usuarioRegistro){
 		
 		Map<String, Object> exito = new LinkedHashMap<>();
@@ -125,7 +125,7 @@ public class UsuarioController {
 			// TODO: handle exception
 			
 			errors.put("message", "Error");
-			//exito.put("content", e);
+			errors.put("content", e);
 			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
 
