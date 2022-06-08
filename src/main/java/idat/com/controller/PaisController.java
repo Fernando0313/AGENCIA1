@@ -192,10 +192,6 @@ Boolean bool = serv.existePaisId(id);
 				errors.put("message","Este nombre de pais ya esta registrado");
 				return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 			}
-			
-		
-			
-			
 				serv.editarPais(paisDTO);
 				exito.put("content", paisDTO);
 				exito.put("message", "Pais editado exitosamente");

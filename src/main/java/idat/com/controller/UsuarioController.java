@@ -130,7 +130,7 @@ public class UsuarioController {
 			// TODO: handle exception
 			
 			errors.put("message", "Error");
-			//exito.put("content", e);
+			errors.put("content", e);
 			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
 
