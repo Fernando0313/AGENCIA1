@@ -40,116 +40,117 @@ public class PaisController {
 	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
 	public ResponseEntity<Object>  registrar(@RequestBody PaisDTORequest pais){
 		
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		
 		Map<String, Object> errors = new LinkedHashMap<>();
-		Map<String, Object> rtn = new LinkedHashMap<>();
-		Set<ConstraintViolation<idat.com.dto.request.PaisDTORequest>> violations = validator.validate(pais);
+		Map<String, Object> exito = new LinkedHashMap<>();
+		Map<String, Object> _validacion = new LinkedHashMap<>();
 		
-		for (ConstraintViolation<PaisDTORequest> violation : violations) {
-		    System.out.print(violation.getPropertyPath()+"-"+violation.getMessage()); 
-		    System.out.println("");
-		    errors.put(violation.getPropertyPath().toString(), violation.getMessage());
-		}
-		if(!errors.isEmpty()) {
-			rtn.put("message", "error al registrar");
-			rtn.put("content", errors);
+		try {
+			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+			Validator validator = factory.getValidator();
+			Set<ConstraintViolation<idat.com.dto.request.PaisDTORequest>> violations = validator.validate(pais);
 			
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
-		}
-		
-		PaisDTOResponse response = serv.guardarPais(pais);
-		if(response.getNombreDTO()!=null ) {
+			for (ConstraintViolation<PaisDTORequest> violation : violations) {
+			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
+			}
+			if(!_validacion.isEmpty()) {
+				errors.put("message", "error al registrar");
+				errors.put("content", _validacion);
+				
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+			}
+			Boolean bool = serv.existePais(pais.getNombreDTO());
+			if(bool) {
+				errors.put("message", "Error, este pais ya esta registrado");
+				
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+			}
+			PaisDTOResponse response = serv.guardarPais(pais);
 			
-			rtn.put("message", "registrado correctamente");
-			rtn.put("content", response);
-			return new ResponseEntity<>(rtn,HttpStatus.CREATED);
+			exito.put("message", "registrado correctamente");
+			exito.put("content", response);
+			return new ResponseEntity<>(exito,HttpStatus.CREATED);
+		} catch (Exception e) {
+			// TODO: handle exception
+			errors.put("message", "Error");
+			errors.put("content", null);
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-		rtn.put("message", "Error");
-		rtn.put("content", null);
-		return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+	
 	}
 	
 	@RequestMapping(path = "/listar", method = RequestMethod.GET)
 	public ResponseEntity<Object> listar(){
-		
-		List<Pais> lPais = new ArrayList<>();
-		Map<String, Object> rtn = new LinkedHashMap<>();
-		//serv.listarPais().forEach(lPais::add);
-		/*
-		for(Pais p : lPais) {
-			System.out.println(p.getNombre()+"-"+p.getCiudad().size());
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		try {
+			List<PaisDTOResponse> paisList = serv.listarPais();
+			if(paisList.size()==0) {
+				return new ResponseEntity<>(errors,HttpStatus.NO_CONTENT);
+			}
+			
+			
+			exito.put("content", paisList);
+			exito.put("message", "Listado exitoso");
+			return new ResponseEntity<>(exito,HttpStatus.OK);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			errors.put("message", "Error");
+			errors.put("content", null);
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-		
-		if(lPais.size()!=0) {
-			rtn.put("message", "");
-			rtn.put("content", lPais);
-			return new ResponseEntity<>(rtn,HttpStatus.OK);
-		}else if(lPais.size()==0) {
-			rtn.put("message", "No data");
-			rtn.put("content", null);
-			return new ResponseEntity<>(rtn,HttpStatus.NO_CONTENT);
-
-		}*/
-		rtn.put("message", "Error");
-		rtn.put("content",serv.listarPais());
-		return new ResponseEntity<>(rtn,HttpStatus.OK);
 	}
+	
+	
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/eliminar/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> eliminar(@PathVariable Integer id){
-		Map<String, Object> rtn = new LinkedHashMap<>();
-		try {
-			
-			PaisDTOResponse p = serv.obtenerPais(id);
-			
-			if(p!=null) {
-				if(p.getCiudad().isEmpty()) {
-					serv.eliminarPais(id);
-					rtn.put("message", "Eliminado");
-					return new ResponseEntity<>(rtn,HttpStatus.OK);
-				}else {
-					rtn.put("message", "Error, primero elimine sus relaciones");
-					return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
-				}
 
-			}
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		try {
+			Boolean bool = serv.existePaisId(id);
 			
+			if(!bool) {
+				
+				errors.put("message", "No existe este pais");
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+		}
+			serv.eliminarPais(id);
+		exito.put("message", "Eliminado exitosamente");
+		return new ResponseEntity<Object>(exito,HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO: handle exception
-			rtn.put("message", "Error");
-			rtn.put("content", e);
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+			errors.put("message", "Error");
+			//rtn.put("content", e);
+			return new ResponseEntity<>(errors,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		rtn.put("message", "Error");
-		return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+		
 		
 	}
 	
 	@RequestMapping(path = "/listar/{id}" , method = RequestMethod.GET)
 	public ResponseEntity<Object> listarPorId(@PathVariable Integer id){
-		Map<String, Object> rtn = new LinkedHashMap<>();
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
 		try {
 
+Boolean bool = serv.existePaisId(id);
 			
+			if(!bool) {
+				
+				errors.put("message", "No existe este pais");
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+		}
 			PaisDTOResponse _pais = serv.obtenerPais(id);
-			
-			if(_pais!=null) {
-				rtn.put("message", "Pais encontrado");
-				rtn.put("content", _pais);
-				return new ResponseEntity<>(rtn,HttpStatus.OK);
-			}else {
-				rtn.put("message", "Error pais no encontrado");
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
-			}
-			
+			exito.put("content", _pais);
+			exito.put("message", "Pais encontrado");
+			return new ResponseEntity<Object>(exito,HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO: handle exception
-			rtn.put("message", "Error");
-			rtn.put("message", e);
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+			errors.put("message", "Error");
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
 		
 	}
@@ -158,44 +159,55 @@ public class PaisController {
 	@RequestMapping(path = "/editar", method = RequestMethod.PUT)
 	public ResponseEntity<Object> editar(@RequestBody PaisDTORequest paisDTO){
 		
-		Map<String, Object> rtn = new LinkedHashMap<>();
+		Map<String, Object> errors = new LinkedHashMap<>();
+		Map<String, Object> exito = new LinkedHashMap<>();
+		Map<String, Object> _validacion = new LinkedHashMap<>();
 		
 		try {
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 			Validator validator = factory.getValidator();
-			
-			Map<String, Object> errors = new LinkedHashMap<>();
-			
 			Set<ConstraintViolation<idat.com.dto.request.PaisDTORequest>> violations = validator.validate(paisDTO);
 			
 			for (ConstraintViolation<PaisDTORequest> violation : violations) {
-			    System.out.print(violation.getPropertyPath()+"-"+violation.getMessage()); 
-			    System.out.println("");
-			    errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
-			if(!errors.isEmpty()) {
-				rtn.put("message", "error al registrar");
-				rtn.put("content", errors);
+			if(!_validacion.isEmpty()) {
+				errors.put("message", "error al actualizar");
+				errors.put("content", _validacion);
 				
-				return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+			}
+
+				Boolean bool = serv.existePaisId(paisDTO.getIdPaisDTO());
+			
+			if(!bool) {
+				
+				errors.put("message", "No existe este pais");
+				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+		}
+			
+			
+			PaisDTOResponse _p = serv.findByNombre(paisDTO.getNombreDTO());
+			if(_p!=null&&_p.getIdPaisDTO()!=paisDTO.getIdPaisDTO()) {
+				errors.put("message","Este nombre de pais ya esta registrado");
+				return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 			}
 			
-			PaisDTOResponse p = serv.obtenerPais(paisDTO.getIdPaisDTO());
+		
 			
-			if(p!=null) {
+			
 				serv.editarPais(paisDTO);
-				rtn.put("message", "Pais editado exitosamente");
-				rtn.put("content", paisDTO);
-				return new ResponseEntity<>(rtn,HttpStatus.OK);
-			}
+				exito.put("content", paisDTO);
+				exito.put("message", "Pais editado exitosamente");
+			
+				return new ResponseEntity<>(exito,HttpStatus.OK);
+			
 		} catch (Exception e) {
 			// TODO: handle exception
-			rtn.put("message", "Error");
-			rtn.put("message", e);
-			return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
+			errors.put("message", "Error");
+			//errors.put("message", e);
+			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-		rtn.put("message", "Error");
-		return new ResponseEntity<>(rtn,HttpStatus.NOT_FOUND);
 	}
 	
 	

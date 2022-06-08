@@ -25,13 +25,13 @@ public class CiudadServiceImpl implements CiudadService{
 		Pais pais = new Pais();
 		CiudadDTOResponse resp = new CiudadDTOResponse();
 		
-		pais.setId_pais(ciudadR.getId_paisDTO());
+		pais.setId(ciudadR.getId_paisDTO());
 		ciudad.setNombre(ciudadR.getNombreDTO());
 		ciudad.setPais(pais);
 		ciudad2 = repo.save(ciudad);
 		//System.out.println(ciudad2.getPais().getId_pais())
 		resp.setNombreDTO(ciudad2.getNombre());
-		resp.setId_paisDTO(ciudad2.getPais().getId_pais());
+		resp.setId_paisDTO(ciudad2.getPais().getId());
 		
 		
 		

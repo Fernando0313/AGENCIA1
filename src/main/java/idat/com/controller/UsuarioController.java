@@ -15,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,8 +42,10 @@ public class UsuarioController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	
 	@Autowired
 	private PasswordEncoder encoder;
+	
 	
 	@RequestMapping(path = "/iniciarSesion", method = RequestMethod.POST)
 	public ResponseEntity<Object> authenticateUser(@RequestBody idat.com.dto.request.UsuarioLogin usuarioLogin){
@@ -71,7 +76,7 @@ public class UsuarioController {
 		return new ResponseEntity<Object>(exito,HttpStatus.OK);
 	}
 	
-	@RequestMapping(path = "/registraree", method = RequestMethod.POST)
+	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
 	public ResponseEntity<Object> registrarUsuario(@RequestBody UsuarioRegistro usuarioRegistro){
 		
 		Map<String, Object> exito = new LinkedHashMap<>();

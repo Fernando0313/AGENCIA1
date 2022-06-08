@@ -40,8 +40,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 		// TODO Auto-generated method stub
 		UsuarioDTO usuarioRes = new UsuarioDTO();
 		Optional<Rol> rol = Rrepo.findById(usuarioDTO.getIdRolDTO());
-		Optional<TipoDocumento> tipo = Trepo.findById(usuarioDTO.getIdEmpresaDTO());
-		Optional<Empresa> empresa = Erepo.findById(usuarioDTO.getIdTipoDocumento());
+		Optional<TipoDocumento> tipo = Trepo.findById(usuarioDTO.getIdTipoDocumento());
+		Optional<Empresa> empresa = Erepo.findById(usuarioDTO.getIdEmpresaDTO());
 		
 		
 		Usuario usuario = new Usuario();

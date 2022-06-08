@@ -39,7 +39,7 @@ public class Origen {
 	@JoinColumn(name = "id_pais",
 			nullable = false, 
 			unique = false,
-			foreignKey = @ForeignKey(foreignKeyDefinition = "foreign key (id_pais) references pais(id_pais)"))
+			foreignKey = @ForeignKey(foreignKeyDefinition = "foreign key (id_pais) references pais(id)"))
 	private Pais pais;
 
 	

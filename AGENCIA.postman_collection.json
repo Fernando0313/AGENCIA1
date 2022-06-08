@@ -65,13 +65,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "password",
-									"value": "admin",
+									"key": "username",
+									"value": "ejemplo@gmail.com",
 									"type": "string"
 								},
 								{
-									"key": "username",
-									"value": "rojofernando296@gmail.com",
+									"key": "password",
+									"value": "123456",
 									"type": "string"
 								}
 							]
@@ -80,7 +80,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"nombreDTO\":\"Francia6\"\r\n}",
+							"raw": "{\r\n    \"nombreDTO\":\"Francia\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -88,12 +88,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:9941/api/v1/pais/registrar",
-							"protocol": "http",
+							"raw": "{{url_local}}/api/v1/pais/registrar",
 							"host": [
-								"localhost"
+								"{{url_local}}"
 							],
-							"port": "9941",
 							"path": [
 								"api",
 								"v1",
@@ -135,12 +133,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "admin",
+									"value": "123456",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "74829850",
+									"value": "ejemplo@gmail.com",
 									"type": "string"
 								}
 							]
@@ -149,7 +147,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"idPaisDTO\":2,\r\n    \"nombreDTO\": \"Rusia3\"\r\n}",
+							"raw": "{\r\n    \"idPaisDTO\":1,\r\n    \"nombreDTO\": \"Rusia\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -189,7 +187,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url_local}}/api/v1/pais/listar/2",
+							"raw": "{{url_local}}/api/v1/pais/listar/28",
 							"host": [
 								"{{url_local}}"
 							],
@@ -198,7 +196,7 @@
 								"v1",
 								"pais",
 								"listar",
-								"2"
+								"28"
 							]
 						}
 					},
@@ -217,7 +215,7 @@
 								},
 								{
 									"key": "username",
-									"value": "franco@gmail.com",
+									"value": "ejemplo@gmail.com",
 									"type": "string"
 								}
 							]
@@ -225,7 +223,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url_local}}/api/v1/pais/eliminar/20",
+							"raw": "{{url_local}}/api/v1/pais/eliminar/2",
 							"host": [
 								"{{url_local}}"
 							],
@@ -234,7 +232,7 @@
 								"v1",
 								"pais",
 								"eliminar",
-								"20"
+								"2"
 							]
 						}
 					},
@@ -246,7 +244,7 @@
 			"name": "Usuario",
 			"item": [
 				{
-					"name": "/api/v1/auth",
+					"name": "/api/v1/auth/registrar",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -255,7 +253,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"idRolDTO\":2,\r\n    \"apPaternoDTO\":\"Rojo\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"contrasenaDTO\":\"123456\",\r\n    \"emailDTO\":\"ejemplo@gmail.com\",\r\n    \"nombreDTO\":\"Fernando\",\r\n    \"documentoDTO\": \"999999999\",\r\n    \"idTipoDocumento\": 2,\r\n    \"idEmpresaDTO\": 2\r\n    \r\n}",
+							"raw": "{\r\n    \"idRolDTO\":1, \r\n    \"apPaternoDTO\":\"Rojo\",\r\n    \"apMaternoDTO\":\"Ortiz\",\r\n    \"contrasenaDTO\":\"123456\",\r\n    \"emailDTO\":\"ejemplo@gmail.com\",\r\n    \"nombreDTO\":\"Fernando\",\r\n    \"documentoDTO\": \"99999999\",\r\n    \"idTipoDocumento\": 1,\r\n    \"idEmpresaDTO\": 1,\r\n    \"estadoDTO\":\"ACTIVO\"\r\n    \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -427,6 +425,55 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/api/v1/auth/cerrarSesion",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/logout",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/auth//iniciarSesion",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documentoOrEmailDTO\":\"ejemplo3@gmail.com\",\r\n    \"contrasenaDTO\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/v1/auth/iniciarSesion",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"iniciarSesion"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -561,11 +608,14 @@
 				{
 					"name": "/api/v1/empresa/registrar",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"estadoDTO\":\"ACTIVO\",\r\n    \"razonSocialDTO\":\"1234\",\r\n    \"nombreDTO\":\"LAN PERU\"\r\n}",
+							"raw": "{\r\n    \"estadoDTO\":\"ACTIVO\",\r\n    \"razonSocialDTO\":\"1234\",\r\n    \"nombreDTO\":\"LAN PERU48\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -695,11 +745,14 @@
 				{
 					"name": "/api/v1/tipoDocumento/registrar",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"tipoDTO\": \"DNI\",\r\n    \"estadoDTO\": \"ACTIVO\"\r\n}",
+							"raw": "{\r\n    \"tipoDTO\": \"RUC7\",\r\n    \"estadoDTO\": \"ACTIVO\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,19 +778,7 @@
 					"name": "/api/v1/tipoDocumento/listar",
 					"request": {
 						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "rojofernando296@gmail.com",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -783,7 +824,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url_local}}/api/v1/tipoDocumento/eliminar/1",
+							"raw": "{{url_local}}/api/v1/tipoDocumento/eliminar/3",
 							"host": [
 								"{{url_local}}"
 							],
@@ -792,7 +833,7 @@
 								"v1",
 								"tipoDocumento",
 								"eliminar",
-								"1"
+								"3"
 							]
 						}
 					},
@@ -853,7 +894,7 @@
 	"variable": [
 		{
 			"key": "url_local",
-			"value": "http://localhost:9942",
+			"value": "http://localhost:9941",
 			"type": "string"
 		}
 	]

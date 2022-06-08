@@ -3,6 +3,7 @@ package idat.com.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class PaisServiceImpl implements PaisService {
 		Pais pais1 = new Pais();
 		
 		pais1.setNombre(pais.getNombreDTO());
-		pais1.setId_pais(pais.getIdPaisDTO());
+		pais1.setId(pais.getIdPaisDTO());
 		
 		repo.saveAndFlush(pais1);
 		
@@ -49,74 +50,77 @@ public class PaisServiceImpl implements PaisService {
 
 	@Override
 	public List<PaisDTOResponse> listarPais() {
-		// TODO Auto-generated method stub
-		/*
-		List<CiudadPais> lCiudad = new ArrayList<>();
-		PaisDTOResponse paisD= null;
-		List<PaisDTOResponse> paisR = new ArrayList<>();
+		
+	
+		
 		List<Pais> lPais = new ArrayList<>();
-		
-		
+		List<PaisDTOResponse> paisListDTO = new ArrayList<PaisDTOResponse>();
+		PaisDTOResponse paisDTO = null;
 		repo.findAll().forEach(lPais::add);
-		CiudadPais c =null;
 		
-		
-		for(Pais p : lPais) {
-			paisD = new PaisDTOResponse();
-			System.out.println(p.getNombre()+"-"+p.getCiudad().size());
-			paisD.setIdPaisDTO(p.getId_pais());
-			paisD.setNombreDTO(p.getNombre());
-			//p.getCiudad().forEach(lCiudad::add);
-			for(Ciudad ciudad: p.getCiudad()) {
-				c=new CiudadPais();
-				c.setNombre(ciudad.getNombre());
-				c.setIdCiudadDTO(ciudad.getId_ciudad());
-				lCiudad.add(c);
+		if(lPais.size()!=0) {
+			for(Pais pais : lPais) {
+					paisDTO = new PaisDTOResponse();
+					paisDTO.setIdPaisDTO(pais.getId());
+					paisDTO.setCiudadDTO(pais.getCiudad());
+					paisDTO.setDestinoDTO(pais.getDestino());
+					paisDTO.setOrigenDTO(pais.getOrigen());
+					paisDTO.setNombreDTO(pais.getNombre());
+					paisListDTO.add(paisDTO);
 			}
-			paisD.setCiudadList(lCiudad);
-		
-			
 		}
-		*/
+		
+		
 
-		
-		PaisDTOResponse resp = null;
-		List<PaisDTOResponse>paisList = new ArrayList<>();
-		
-		
-		List<Pais> lPais = new ArrayList<>();
-		repo.findAll().forEach(lPais::add);
-		for(Pais p : lPais) {
-			resp =new PaisDTOResponse();
-			
-			resp.setIdPaisDTO(p.getId_pais());
-			resp.setNombreDTO(p.getNombre());
-			resp.setCiudad(p.getCiudad());
-			paisList.add(resp);
+	return paisListDTO;
 			
 		}
 		
-		
-		
-		return paisList;
-	}
+	
 
 	@Override
 	public PaisDTOResponse obtenerPais(Integer id) {
 		// TODO Auto-generated method stub
 		PaisDTOResponse paisDTO = new PaisDTOResponse();
-		Pais pais = repo.findById(id).orElse(null);
-		
+		Optional<Pais> pais = repo.findById(id);
 		if(pais==null) {
 			return null;
 		}
-		paisDTO.setCiudad(pais.getCiudad());
-		paisDTO.setIdPaisDTO(pais.getId_pais());
-		paisDTO.setNombreDTO(pais.getNombre());
-
+		paisDTO.setIdPaisDTO(pais.get().getId());
+		paisDTO.setCiudadDTO(pais.get().getCiudad());
+		paisDTO.setDestinoDTO(pais.get().getDestino());
+		paisDTO.setOrigenDTO(pais.get().getOrigen());
+		paisDTO.setNombreDTO(pais.get().getNombre());
 		return paisDTO;
 	}
 
+	@Override
+	public Boolean existePais(String nombre) {
+		// TODO Auto-generated method stub
+		Boolean bool = repo.existsByNombre(nombre);
+		return bool;
+	}
 	
-
+	@Override
+	public Boolean existePaisId(Integer id) {
+		// TODO Auto-generated method stub
+		Boolean bool = repo.existsById(id);
+		return bool;
+	}
+	@Override
+	public PaisDTOResponse findByNombre(String nombre) {
+		// TODO Auto-generated method stub
+		PaisDTOResponse paisDTO = new PaisDTOResponse();
+		Pais pais = repo.findByNombre(nombre);
+		if(pais==null) {
+			return null;
+		}
+		paisDTO.setIdPaisDTO(pais.getId());
+		paisDTO.setCiudadDTO(pais.getCiudad());
+		paisDTO.setDestinoDTO(pais.getDestino());
+		paisDTO.setOrigenDTO(pais.getOrigen());
+		paisDTO.setNombreDTO(pais.getNombre());
+		return paisDTO;
+		
+	}
 }

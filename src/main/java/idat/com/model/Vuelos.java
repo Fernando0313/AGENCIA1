@@ -2,8 +2,11 @@ package idat.com.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -11,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -52,7 +57,12 @@ public class Vuelos {
 	private Integer cantAsientos;
 	private Integer cantAsientosDisponibles;
 	private String estado;
-	private Double precio;
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@JoinTable(name = "vuelo_tpago", joinColumns = @JoinColumn(name = "vuelo_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tpago_id", referencedColumnName = "id"))
+	private Set<TipoPago> tpago = new HashSet<TipoPago>();
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@JoinTable(name = "vuelo_ancillaries", joinColumns = @JoinColumn(name = "vuelo_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ancillaries_id", referencedColumnName = "id"))
+	private Set<Ancillaries> ancillaries = new HashSet<Ancillaries>();
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonProperty(access = Access.WRITE_ONLY)

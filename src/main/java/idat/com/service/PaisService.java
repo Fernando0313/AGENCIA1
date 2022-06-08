@@ -15,4 +15,7 @@ public interface PaisService {
 	
 	public List<PaisDTOResponse> listarPais();
 	public PaisDTOResponse obtenerPais(Integer id);
+	public Boolean existePais(String nombre);
+	public Boolean existePaisId(Integer id);
+	public PaisDTOResponse findByNombre(String nombre);
 }
