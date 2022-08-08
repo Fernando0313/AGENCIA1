@@ -1,13 +1,11 @@
 package idat.com.controller;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -23,22 +21,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import idat.com.dto.request.OrigenEditar;
+import idat.com.dto.request.OrigenRegistrar;
 import idat.com.dto.request.PaisDTORequest;
+import idat.com.dto.response.OrigenDTO;
 import idat.com.dto.response.PaisDTOResponse;
-import idat.com.model.Pais;
+import idat.com.model.Origen;
+import idat.com.service.OrigenServiceImpl;
 import idat.com.service.PaisServiceImpl;
 
 @RestController
-@RequestMapping("/api/v1/pais")
+@RequestMapping("/api/v1/origen")
 @CrossOrigin(origins = "*")
-public class PaisController {
+public class OrigenController {
 
 	@Autowired
-	private PaisServiceImpl serv;
+	private OrigenServiceImpl serv;
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/registrar", method = RequestMethod.POST)
-	public ResponseEntity<Object>  registrar(@RequestBody PaisDTORequest pais){
+	public ResponseEntity<Object>  registrar(@RequestBody OrigenRegistrar origenR){
 		
 		Map<String, Object> errors = new LinkedHashMap<>();
 		Map<String, Object> exito = new LinkedHashMap<>();
@@ -47,9 +49,9 @@ public class PaisController {
 		try {
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 			Validator validator = factory.getValidator();
-			Set<ConstraintViolation<idat.com.dto.request.PaisDTORequest>> violations = validator.validate(pais);
+			Set<ConstraintViolation<OrigenRegistrar>> violations = validator.validate(origenR);
 			
-			for (ConstraintViolation<PaisDTORequest> violation : violations) {
+			for (ConstraintViolation<OrigenRegistrar> violation : violations) {
 			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
 			if(!_validacion.isEmpty()) {
@@ -58,16 +60,15 @@ public class PaisController {
 				
 				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
-			Boolean bool = serv.existePais(pais.getNombreDTO());
+			Boolean bool = serv.existeOrigen(origenR.getNombreDTO());
 			if(bool) {
-				errors.put("message", "Error, este pais ya esta registrado");
+				errors.put("message", "Error, este origen ya esta registrado");
 				
 				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
-			PaisDTOResponse response = serv.guardarPais(pais);
+			serv.guardarOrigen(origenR);
 			
 			exito.put("message", "registrado correctamente");
-			exito.put("content", response);
 			return new ResponseEntity<>(exito,HttpStatus.CREATED);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -80,24 +81,28 @@ public class PaisController {
 	
 	@RequestMapping(path = "/listar", method = RequestMethod.GET)
 	public ResponseEntity<Object> listar(){
+		System.out.println("##########################");
 		Map<String, Object> errors = new LinkedHashMap<>();
 		Map<String, Object> exito = new LinkedHashMap<>();
 		try {
-			List<PaisDTOResponse> paisList = serv.listarPais();
-			if(paisList.size()==0) {
+			List<Origen> origenList = serv.listarOrigen();
+			if(origenList.size()==0) {
+				
 				return new ResponseEntity<>(errors,HttpStatus.NO_CONTENT);
 			}
+			System.out.println("##########################");
+			System.out.println(origenList.get(0).getPais().getNombre());
 			
-			System.out.println(paisList);
-			exito.put("content", paisList);
+			
+			exito.put("content", origenList);
 			exito.put("message", "Listado exitoso");
-			return new ResponseEntity<>(exito,HttpStatus.OK);
+			return new ResponseEntity<Object>(exito,HttpStatus.OK);
 			
 		}catch (Exception e) {
 			// TODO: handle exception
 			errors.put("message", "Error");
-			errors.put("content", null);
-			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
+			errors.put("content", e);
+			return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -110,14 +115,14 @@ public class PaisController {
 		Map<String, Object> errors = new LinkedHashMap<>();
 		Map<String, Object> exito = new LinkedHashMap<>();
 		try {
-			Boolean bool = serv.existePaisId(id);
+			Boolean bool = serv.existeOrigenId(id);
 			
 			if(!bool) {
 				
-				errors.put("message", "No existe este pais");
+				errors.put("message", "No existe este origen");
 				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-			serv.eliminarPais(id);
+			serv.eliminarOrigen(id);
 		exito.put("message", "Eliminado exitosamente");
 		return new ResponseEntity<Object>(exito,HttpStatus.OK);
 		} catch (Exception e) {
@@ -136,16 +141,16 @@ public class PaisController {
 		Map<String, Object> exito = new LinkedHashMap<>();
 		try {
 
-Boolean bool = serv.existePaisId(id);
+Boolean bool = serv.existeOrigenId(id);
 			
 			if(!bool) {
 				
-				errors.put("message", "No existe este pais");
+				errors.put("message", "No existe este origen");
 				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
-			PaisDTOResponse _pais = serv.obtenerPais(id);
-			exito.put("content", _pais);
-			exito.put("message", "Pais encontrado");
+			OrigenDTO origenDTO = serv.obtenerOrigen(id);
+			exito.put("content", origenDTO);
+			exito.put("message", "Origen encontrado");
 			return new ResponseEntity<Object>(exito,HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -157,7 +162,7 @@ Boolean bool = serv.existePaisId(id);
 	
 	
 	@RequestMapping(path = "/editar", method = RequestMethod.PUT)
-	public ResponseEntity<Object> editar(@RequestBody PaisDTORequest paisDTO){
+	public ResponseEntity<Object> editar(@RequestBody OrigenEditar origenR ){
 		
 		Map<String, Object> errors = new LinkedHashMap<>();
 		Map<String, Object> exito = new LinkedHashMap<>();
@@ -166,9 +171,9 @@ Boolean bool = serv.existePaisId(id);
 		try {
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 			Validator validator = factory.getValidator();
-			Set<ConstraintViolation<idat.com.dto.request.PaisDTORequest>> violations = validator.validate(paisDTO);
+			Set<ConstraintViolation<OrigenEditar>> violations = validator.validate(origenR);
 			
-			for (ConstraintViolation<PaisDTORequest> violation : violations) {
+			for (ConstraintViolation<OrigenEditar> violation : violations) {
 			    _validacion.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
 			if(!_validacion.isEmpty()) {
@@ -178,7 +183,7 @@ Boolean bool = serv.existePaisId(id);
 				return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 			}
 
-				Boolean bool = serv.existePaisId(paisDTO.getIdPaisDTO());
+				Boolean bool = serv.existeOrigenId(origenR.getIdOrigenDTO());
 			
 			if(!bool) {
 				
@@ -187,14 +192,13 @@ Boolean bool = serv.existePaisId(id);
 		}
 			
 			
-			PaisDTOResponse _p = serv.findByNombre(paisDTO.getNombreDTO());
-			if(_p!=null&&_p.getIdPaisDTO()!=paisDTO.getIdPaisDTO()) {
-				errors.put("message","Este nombre de pais ya esta registrado");
+			OrigenDTO _o = serv.findByNombre(origenR.getNombreDTO());
+			if(_o!=null&&_o.getIdOrigenDTO()!=origenR.getIdOrigenDTO()) {
+				errors.put("message","Este nombre de origen ya esta registrado");
 				return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 			}
-				serv.editarPais(paisDTO);
-				exito.put("content", paisDTO);
-				exito.put("message", "Pais editado exitosamente");
+				serv.editarOrigen(origenR);
+				exito.put("message", "Origen editado exitosamente");
 			
 				return new ResponseEntity<>(exito,HttpStatus.OK);
 			
@@ -205,6 +209,5 @@ Boolean bool = serv.existePaisId(id);
 			return new ResponseEntity<>(errors,HttpStatus.NOT_FOUND);
 		}
 	}
-	
 	
 }

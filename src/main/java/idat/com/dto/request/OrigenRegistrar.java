@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class OrigenRequest {
+public class OrigenRegistrar{
 
-	@NotNull(message = "El idOrigenDTO no puede ser nulo")
-	private Integer idOrigenDTO;
+
 	@NotNull(message = "El nombreDTO no puede ser nulo")
 	@NotBlank(message = "El nombre DTO no puede estar en blanco")
 	private String nombreDTO;

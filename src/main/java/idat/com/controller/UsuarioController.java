@@ -12,6 +12,7 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -135,7 +136,7 @@ public class UsuarioController {
 		}
 
 	}
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/editar", method = RequestMethod.PUT)
 	public ResponseEntity<Object> editarUsuario(@RequestBody UsuarioEditar usuarioEditar){
 		
@@ -229,7 +230,7 @@ public class UsuarioController {
 		
 	}
 
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/listar/{id}" , method = RequestMethod.GET)
 	public ResponseEntity<Object> listarPorId(@PathVariable Integer id){
 		Map<String, Object> errors = new LinkedHashMap<>();
@@ -274,6 +275,7 @@ public class UsuarioController {
 			return new ResponseEntity<Object>(errors,HttpStatus.NOT_FOUND);
 		}
 	}
+	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/eliminar/{id}" , method = RequestMethod.DELETE)
 	public ResponseEntity<Object> eliminarUsuario(@PathVariable Integer id){
 		Map<String, Object> errors = new LinkedHashMap<>();
