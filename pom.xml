@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>idat.com</groupId>
-	<artifactId>idat.com</artifactId>
+	<artifactId>AGENCIAvi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AGENCIA</name>
 	<description>idat</description>
