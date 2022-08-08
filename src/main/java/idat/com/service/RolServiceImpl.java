@@ -25,7 +25,7 @@ public class RolServiceImpl implements RolService {
 		RolDTO rolDTO = null;
 		
 		Optional<Rol> rol = repo.findById(id); 
-		if(rol.isEmpty()) {
+		if(rol !=null) {
 			return rolDTO;
 		}
 		rolDTO = new RolDTO();

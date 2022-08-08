@@ -246,7 +246,7 @@ if(_usuario!=null) {
 		// TODO Auto-generated method stub
 		Optional<Usuario> usuario = repo.findById(id);
 		UsuarioLogin usuarioLogin = null;
-		if(!usuario.isEmpty()) {
+		if(usuario!=null) {
 			System.out.println("##################333");
 			usuarioLogin = new UsuarioLogin();
 			usuarioLogin.setApMaternoDTO(usuario.get().getApMaterno());
